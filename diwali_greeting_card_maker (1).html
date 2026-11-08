@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shubh Deepawali | Premium Greeting Card Maker</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2canvas for downloading the card as an image -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Rozha+One&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        hindi: ['"Rozha One"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #FAF8F5 0%, #F3EFEA 100%);
+            min-height: 100vh;
+            color: #1E1B18;
+        }
+
+        /* 4 Card Visual Themes */
+        .card-theme-ivory {
+            background: radial-gradient(circle at 50% 25%, #FFFBEB 0%, #FAF8F5 65%, #F3EFEA 100%);
+            color: #1E1B18;
+            border-color: #D97706;
+        }
+        .card-theme-ivory .card-sub { color: #B45309; }
+        .card-theme-ivory .card-body { color: #44403C; }
+        .card-theme-ivory .card-border-inner { border-color: rgba(217, 119, 6, 0.35); }
+        .card-theme-ivory .corner-ornament { color: #D97706; }
+
+        .card-theme-peach {
+            background: linear-gradient(155deg, #FFFDF9 0%, #FFE8D6 52%, #FDE2E4 100%);
+            color: #2B1810;
+            border-color: #C2410C;
+        }
+        .card-theme-peach .card-sub { color: #C2410C; }
+        .card-theme-peach .card-body { color: #573B2E; }
+        .card-theme-peach .card-border-inner { border-color: rgba(194, 65, 12, 0.3); }
+        .card-theme-peach .corner-ornament { color: #EA580C; }
+
+        .card-theme-maroon {
+            background: radial-gradient(circle at 50% 22%, #6B1426 0%, #3D0A14 75%, #26050B 100%);
+            color: #FEF3C7;
+            border-color: #F59E0B;
+        }
+        .card-theme-maroon .card-sub { color: #FBBF24; }
+        .card-theme-maroon .card-body { color: #FDE68A; }
+        .card-theme-maroon .card-border-inner { border-color: rgba(251, 191, 36, 0.4); }
+        .card-theme-maroon .corner-ornament { color: #FBBF24; }
+
+        .card-theme-navy {
+            background: radial-gradient(circle at 50% 22%, #1E293B 0%, #0F172A 75%, #090D16 100%);
+            color: #F8FAFC;
+            border-color: #EAB308;
+        }
+        .card-theme-navy .card-sub { color: #FACC15; }
+        .card-theme-navy .card-body { color: #E2E8F0; }
+        .card-theme-navy .card-border-inner { border-color: rgba(250, 204, 21, 0.38); }
+        .card-theme-navy .corner-ornament { color: #FACC15; }
+
+        /* Diya Flame Flicker */
+        @keyframes flamePulse {
+            0%, 100% { transform: scale(1) rotate(-1deg); opacity: 0.95; }
+            50% { transform: scale(1.08, 0.95) rotate(1.5deg); opacity: 1; }
+        }
+        .diya-flame {
+            transform-origin: 60px 44px;
+            animation: flamePulse 2s infinite ease-in-out;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+        }
+        .diya-off .diya-flame {
+            opacity: 0;
+            transform: scale(0.4);
+            animation: none;
+        }
+
+        /* Subtle rotating mandala behind diya */
+        @keyframes slowSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .mandala-ring {
+            animation: slowSpin 38s linear infinite;
+        }
+    </style>
+</head>
+<body class="py-8 px-4 sm:px-6 lg:px-10">
+
+    <!-- Top Header -->
+    <header class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 pb-8 border-b border-stone-200">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-700">
+                <i class="fa-solid fa-fire-flame-curved text-lg"></i>
+            </div>
+            <div>
+                <h1 class="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-stone-900">
+                    Deepawali Greeting Card Studio
+                </h1>
+                <p class="text-xs sm:text-sm text-stone-500">
+                    Customize, preview &amp; download a high-resolution Diwali card
+                </p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+            <button onclick="downloadCard()" id="downloadBtn" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-stone-900 hover:bg-stone-800 text-white text-xs sm:text-sm font-semibold shadow-sm transition active:scale-95">
+                <i class="fa-solid fa-download text-amber-400"></i>
+                <span>Download Card (PNG)</span>
+            </button>
+            <button onclick="copyCardText()" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white hover:bg-stone-50 text-stone-800 border border-stone-300 text-xs sm:text-sm font-medium transition">
+                <i class="fa-regular fa-copy text-amber-600"></i>
+                <span>Copy Wish</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Studio Layout -->
+    <main class="max-w-6xl mx-auto mt-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+        <!-- LEFT COLUMN: THE GREETING CARD PREVIEW (7 Cols) -->
+        <div class="lg:col-span-7 flex flex-col items-center">
+            <!-- Capture Wrapper for PNG export -->
+            <div id="diwaliCard" class="card-theme-ivory relative w-full max-w-[480px] aspect-[4/5] rounded-3xl p-5 sm:p-7 shadow-2xl border-2 transition-all duration-500 flex flex-col justify-between overflow-hidden select-none">
+
+                <!-- Decorative Inner Frame -->
+                <div class="card-border-inner relative w-full h-full rounded-2xl border-2 p-6 sm:p-8 flex flex-col justify-between items-center text-center z-10">
+
+                    <!-- 4 Corner Ornaments -->
+                    <span class="corner-ornament absolute top-2.5 left-3 text-lg opacity-80">✦</span>
+                    <span class="corner-ornament absolute top-2.5 right-3 text-lg opacity-80">✦</span>
+                    <span class="corner-ornament absolute bottom-2.5 left-3 text-lg opacity-80">✦</span>
+                    <span class="corner-ornament absolute bottom-2.5 right-3 text-lg opacity-80">✦</span>
+
+                    <!-- Top Auspicious Header -->
+                    <div class="space-y-1">
+                        <p id="cardMantra" class="card-sub text-[11px] sm:text-xs font-semibold uppercase tracking-[0.22em]">
+                            ॥ श्री गणेशाय नमः • शुभ दीपावली ॥
+                        </p>
+                        <div class="w-16 h-[1.5px] bg-current opacity-30 mx-auto"></div>
+                    </div>
+
+                    <!-- Centerpiece Interactive Diya & Mandala -->
+                    <div class="relative my-1 flex flex-col items-center justify-center">
+                        <!-- Subtle Geometric Mandala SVG -->
+                        <svg class="mandala-ring w-36 h-36 sm:w-40 sm:h-40 opacity-15 absolute pointer-events-none" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="44" fill="none" stroke="currentColor" stroke-width="0.75" stroke-dasharray="3 3"/>
+                            <circle cx="50" cy="50" r="34" fill="none" stroke="currentColor" stroke-width="0.75"/>
+                            <polygon points="50,6 62,38 94,50 62,62 50,94 38,62 6,50 38,38" fill="none" stroke="currentColor" stroke-width="0.75"/>
+                            <polygon points="50,6 62,38 94,50 62,62 50,94 38,62 6,50 38,38" fill="none" stroke="currentColor" stroke-width="0.75" transform="rotate(45 50 50)"/>
+                        </svg>
+
+                        <!-- Clickable Glowing Diya -->
+                        <div id="cardDiyaContainer" onclick="toggleCardDiya()" class="cursor-pointer relative z-10 w-28 h-24 flex items-center justify-center" title="Click to toggle Diya flame">
+                            <svg viewBox="0 0 120 105" class="w-full h-full overflow-visible">
+                                <!-- Flame Group -->
+                                <g class="diya-flame">
+                                    <circle cx="60" cy="28" r="24" fill="#FBBF24" opacity="0.35"/>
+                                    <circle cx="60" cy="30" r="14" fill="#F59E0B" opacity="0.45"/>
+                                    <path d="M60,6 C70,22 72,36 60,46 C48,36 50,22 60,6 Z" fill="#F59E0B"/>
+                                    <path d="M60,16 C65,27 66,36 60,43 C54,36 55,27 60,16 Z" fill="#FEF3C7"/>
+                                </g>
+                                <!-- Decorative Clay Lamp Bowl -->
+                                <path d="M22,52 Q60,65 98,52 Q88,84 60,86 Q32,84 22,52 Z" fill="#B45309" stroke="#F59E0B" stroke-width="2"/>
+                                <!-- Inner Oil Surface -->
+                                <ellipse cx="60" cy="52" rx="35" ry="6" fill="#78350F" stroke="#FBBF24" stroke-width="1.2"/>
+                                <!-- Decorative Dots on Bowl -->
+                                <circle cx="45" cy="68" r="2" fill="#FDE68A"/>
+                                <circle cx="60" cy="71" r="2.5" fill="#FDE68A"/>
+                                <circle cx="75" cy="68" r="2" fill="#FDE68A"/>
+                                <!-- Base Pedestal -->
+                                <path d="M44,86 L76,86 L82,93 L38,93 Z" fill="#92400E" stroke="#F59E0B" stroke-width="1.2"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Greeting Title & Recipient -->
+                    <div class="space-y-2 max-w-xs sm:max-w-sm">
+                        <p id="previewToLine" class="card-sub text-xs sm:text-sm font-semibold tracking-wide">
+                            Dear Family &amp; Friends,
+                        </p>
+                        <h2 id="previewHeading" class="font-serif text-3xl sm:text-4xl font-bold tracking-tight leading-none">
+                            Shubh Deepawali
+                        </h2>
+                        <p id="previewMessage" class="card-body text-xs sm:text-sm leading-relaxed pt-1 font-normal">
+                            May the divine light of diyas fill your home with peace, good health, and endless prosperity. Wishing you a joyful and blessed Festival of Lights!
+                        </p>
+                    </div>
+
+                    <!-- Sender Footer -->
+                    <div class="pt-3 border-t border-current/15 w-full flex flex-col items-center">
+                        <span class="text-[10px] uppercase tracking-widest opacity-70">Warm Regards</span>
+                        <p id="previewFromLine" class="font-serif text-lg sm:text-xl font-semibold mt-0.5">
+                            Your Name &amp; Family
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+            <p class="text-xs text-stone-500 mt-3 flex items-center gap-1.5">
+                <i class="fa-regular fa-hand-pointer text-amber-600"></i>
+                <span>Tip: Click directly on the Diya inside the card to light or dim the flame.</span>
+            </p>
+        </div>
+
+        <!-- RIGHT COLUMN: CUSTOMIZATION CONTROLS (5 Cols) -->
+        <div class="lg:col-span-5 bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-8 border border-stone-200/90 shadow-sm space-y-6">
+            <div>
+                <h3 class="font-serif text-2xl font-bold text-stone-900">Customize Your Card</h3>
+                <p class="text-xs text-stone-500 mt-0.5">Every change updates your Diwali card live</p>
+            </div>
+
+            <!-- 1. Choose Card Theme -->
+            <div class="space-y-2.5">
+                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600">
+                    1. Select Card Background Theme
+                </label>
+                <div class="grid grid-cols-2 gap-2.5">
+                    <button onclick="setCardTheme('card-theme-ivory', this)" class="theme-btn ring-2 ring-amber-600 flex items-center gap-2.5 p-2.5 rounded-xl border border-stone-200 bg-stone-50/70 hover:bg-stone-100 text-left transition">
+                        <span class="w-6 h-6 rounded-full bg-[#FAF8F5] border border-amber-500 shrink-0"></span>
+                        <div>
+                            <p class="text-xs font-semibold text-stone-900">Pure Ivory</p>
+                            <p class="text-[10px] text-stone-500">Minimal &amp; Warm</p>
+                        </div>
+                    </button>
+
+                    <button onclick="setCardTheme('card-theme-peach', this)" class="theme-btn flex items-center gap-2.5 p-2.5 rounded-xl border border-stone-200 bg-stone-50/70 hover:bg-stone-100 text-left transition">
+                        <span class="w-6 h-6 rounded-full bg-gradient-to-tr from-[#FFE8D6] to-[#FDE2E4] border border-orange-400 shrink-0"></span>
+                        <div>
+                            <p class="text-xs font-semibold text-stone-900">Peach Glow</p>
+                            <p class="text-[10px] text-stone-500">Soft Gradient</p>
+                        </div>
+                    </button>
+
+                    <button onclick="setCardTheme('card-theme-maroon', this)" class="theme-btn flex items-center gap-2.5 p-2.5 rounded-xl border border-stone-200 bg-stone-50/70 hover:bg-stone-100 text-left transition">
+                        <span class="w-6 h-6 rounded-full bg-[#4A0E1C] border border-amber-400 shrink-0"></span>
+                        <div>
+                            <p class="text-xs font-semibold text-stone-900">Royal Maroon</p>
+                            <p class="text-[10px] text-stone-500">Traditional Gold</p>
+                        </div>
+                    </button>
+
+                    <button onclick="setCardTheme('card-theme-navy', this)" class="theme-btn flex items-center gap-2.5 p-2.5 rounded-xl border border-stone-200 bg-stone-50/70 hover:bg-stone-100 text-left transition">
+                        <span class="w-6 h-6 rounded-full bg-[#0F172A] border border-yellow-400 shrink-0"></span>
+                        <div>
+                            <p class="text-xs font-semibold text-stone-900">Midnight Navy</p>
+                            <p class="text-[10px] text-stone-500">Starlight Festive</p>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. Recipient & Sender Names -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1.5">
+                        To (Recipient)
+                    </label>
+                    <input type="text" id="inputTo" value="Dear Family & Friends," oninput="updateCardText()" placeholder="e.g. Dear Rahul & Family," class="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-sm focus:outline-none focus:border-amber-600">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1.5">
+                        From (Your Name)
+                    </label>
+                    <input type="text" id="inputFrom" value="Your Name & Family" oninput="updateCardText()" placeholder="e.g. Sharma Family" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-sm focus:outline-none focus:border-amber-600">
+                </div>
+            </div>
+
+            <!-- 3. Card Title & Preset Wishes -->
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1.5">
+                    Card Heading
+                </label>
+                <input type="text" id="inputHeading" value="Shubh Deepawali" oninput="updateCardText()" class="w-full px-3.5 py-2 rounded-xl border border-stone-300 text-sm focus:outline-none focus:border-amber-600">
+            </div>
+
+            <!-- Quick Language Presets -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600">
+                        Quick Wish Templates
+                    </label>
+                    <span class="text-[11px] text-amber-700 font-medium">Click to apply</span>
+                </div>
+                <div class="flex flex-wrap gap-1.5">
+                    <button onclick="applyPreset(0)" class="text-xs px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-medium transition">
+                        Classic English
+                    </button>
+                    <button onclick="applyPreset(1)" class="text-xs px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-medium transition">
+                        Pure Hindi (हिंदी)
+                    </button>
+                    <button onclick="applyPreset(2)" class="text-xs px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-medium transition">
+                        Warm Hinglish
+                    </button>
+                    <button onclick="applyPreset(3)" class="text-xs px-3 py-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-medium transition">
+                        Short &amp; Minimal
+                    </button>
+                </div>
+            </div>
+
+            <!-- Custom Wish Message Box -->
+            <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-stone-600 mb-1.5">
+                    Your Custom Wish Message
+                </label>
+                <textarea id="inputMessage" rows="3" oninput="updateCardText()" class="w-full px-3.5 py-2.5 rounded-xl border border-stone-300 text-sm focus:outline-none focus:border-amber-600 leading-relaxed">May the divine light of diyas fill your home with peace, good health, and endless prosperity. Wishing you a joyful and blessed Festival of Lights!</textarea>
+            </div>
+
+            <!-- Action Bar -->
+            <div class="pt-2 flex flex-col sm:flex-row gap-2.5">
+                <button onclick="downloadCard()" class="flex-1 py-3 px-4 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold text-sm shadow-sm transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-image"></i>
+                    <span>Save Card as Image</span>
+                </button>
+                <button onclick="toggleCardDiya()" class="py-3 px-4 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-800 font-medium text-sm transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-fire text-amber-600"></i>
+                    <span>Toggle Diya</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-stone-900 text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-2.5 text-xs sm:text-sm">
+        <i class="fa-solid fa-circle-check text-amber-400"></i>
+        <span id="toastMsg">Card updated!</span>
+    </div>
+
+    <script>
+        const presets = [
+            {
+                heading: "Shubh Deepawali",
+                message: "May the divine light of diyas fill your home with peace, good health, and endless prosperity. Wishing you a joyful and blessed Festival of Lights!"
+            },
+            {
+                heading: "शुभ दीपावली",
+                message: "दीपों का यह पावन त्योहार आपके जीवन में सुख, शांति, उत्तम स्वास्थ्य और अपार समृद्धि लेकर आए। आपको और आपके परिवार को दीपावली की हार्दिक शुभकामनाएँ!"
+            },
+            {
+                heading: "Happy Diwali!",
+                message: "Iss Diwali aapke ghar mein khushiyon ki roshni aur mithas hamesha bani rahe. Wishing you and your family peace, love, and new beginnings!"
+            },
+            {
+                heading: "Light & Harmony",
+                message: "Wishing you warmth, clarity, and joyful moments with loved ones this Deepawali."
+            }
+        ];
+
+        function setCardTheme(themeClass, btnEl) {
+            const card = document.getElementById('diwaliCard');
+            card.classList.remove('card-theme-ivory', 'card-theme-peach', 'card-theme-maroon', 'card-theme-navy');
+            card.classList.add(themeClass);
+
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-amber-600');
+            });
+            if (btnEl) btnEl.classList.add('ring-2', 'ring-amber-600');
+        }
+
+        function updateCardText() {
+            const toVal = document.getElementById('inputTo').value.trim() || 'Dear Family & Friends,';
+            const fromVal = document.getElementById('inputFrom').value.trim() || 'Your Name & Family';
+            const headingVal = document.getElementById('inputHeading').value.trim() || 'Shubh Deepawali';
+            const msgVal = document.getElementById('inputMessage').value.trim() || '';
+
+            document.getElementById('previewToLine').textContent = toVal;
+            document.getElementById('previewFromLine').textContent = fromVal;
+            document.getElementById('previewHeading').textContent = headingVal;
+            document.getElementById('previewMessage').textContent = msgVal;
+        }
+
+        function applyPreset(index) {
+            const item = presets[index];
+            document.getElementById('inputHeading').value = item.heading;
+            document.getElementById('inputMessage').value = item.message;
+            updateCardText();
+            showToast('Preset wish applied!');
+        }
+
+        function toggleCardDiya() {
+            const diyaContainer = document.getElementById('cardDiyaContainer');
+            diyaContainer.classList.toggle('diya-off');
+            const isOff = diyaContainer.classList.contains('diya-off');
+            showToast(isOff ? 'Diya flame dimmed' : 'Diya lit with warm glow!');
+        }
+
+        function copyCardText() {
+            const toLine = document.getElementById('previewToLine').textContent;
+            const heading = document.getElementById('previewHeading').textContent;
+            const msg = document.getElementById('previewMessage').textContent;
+            const fromLine = document.getElementById('previewFromLine').textContent;
+
+            const fullText = `✨ ${heading} ✨\n\n${toLine}\n${msg}\n\n— ${fromLine}`;
+            const temp = document.createElement('textarea');
+            temp.value = fullText;
+            document.body.appendChild(temp);
+            temp.select();
+            document.execCommand('copy');
+            document.body.removeChild(temp);
+            showToast('Full Diwali card wish copied!');
+        }
+
+        async function downloadCard() {
+            const cardEl = document.getElementById('diwaliCard');
+            const btn = document.getElementById('downloadBtn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-amber-400"></i><span>Creating PNG...</span>';
+
+            try {
+                const canvas = await html2canvas(cardEl, {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: null
+                });
+                const link = document.createElement('a');
+                link.download = 'Shubh-Deepawali-Card.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                showToast('Diwali Card downloaded as PNG!');
+            } catch (err) {
+                showToast('Could not export image, try screenshot.');
+            } finally {
+                btn.innerHTML = originalHTML;
+            }
+        }
+
+        let toastTimeout = null;
+        function showToast(text) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = text;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
